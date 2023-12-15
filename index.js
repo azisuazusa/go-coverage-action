@@ -293,38 +293,31 @@ function getCommentMarker() {
 }
 
 async function generatePRComment(stats) {
+  const notesRef = core.getInput('notes-ref');
   const commentMarker = getCommentMarker();
-  let commitComment = `${commentMarker}Go test coverage: ${stats.current.coverage_pct.toFixed(
-    1
-  )}% for commit ${ctx.sha}`;
+  let commitComment = `${commentMarker}
+    ### 🎉 New Test Coverage Added for ${notesRef}-svc!
+    Fantastic work! 👏 You've initiated test coverage at **${stats.current.coverage_pct.toFixed(1)}%**. Each new test helps fortify our codebase. Keep expanding our coverage! 🚀`;
 
   if (stats.prior.coverage_pct != null) {
-    core.info(
-      `Previous coverage: ${stats.prior.coverage_pct}% as of ${stats.prior.sha}`
-    );
+    commitComment = `${commentMarker}
+      ### ↔️ Test Coverage Unchanged for ${notesRef}-svc
+      Consistency is key! Let's use this stability as a launchpad to aim higher. Current coverage remains at **${stats.current.coverage_pct.toFixed(1)}%**. Previous commit: ${stats.prior.sha}. More tests mean stronger code! 🚀💡`;
 
-    commitComment = `${commentMarker}:arrow_right: Go test coverage stayed the same at ${stats.current.coverage_pct.toFixed(
-      1
-    )}% compared to ${stats.prior.sha}`;
     if (stats.deltaPct > 0) {
-      commitComment = `${commentMarker}:arrow_up: Go test coverage increased from ${stats.prior.coverage_pct.toFixed(
-        1
-      )}% to ${stats.current.coverage_pct.toFixed(1)}% compared to ${
-        stats.prior.sha
-      }`;
+      commitComment = `${commentMarker}
+        ### 📈 Increased Test Coverage for ${notesRef}-svc!
+        Fantastic progress! 🎉 We're stepping up our testing game, increasing coverage from **${stats.prior.coverage_pct.toFixed(1)}%** (commit: ${stats.prior.sha}) to **${stats.current.coverage_pct.toFixed(1)}%**. Keep pushing forward! 💻✨`;
     } else if (stats.deltaPct < 0) {
-      commitComment = `${commentMarker}:arrow_down: Go test coverage decreased from ${stats.prior.coverage_pct.toFixed(
-        1
-      )}% to ${stats.current.coverage_pct.toFixed(1)}% compared to ${
-        stats.prior.sha
-      }`;
+      commitComment = `${commentMarker}
+        ### 🛑 Decreased Test Coverage Alert for ${notesRef}-svc!
+        Not to worry! Let's turn this into a positive. Use this opportunity to strengthen our tests. Previous commit: ${stats.prior.sha}. Previous: **${stats.prior.coverage_pct.toFixed(1)}%**, Current: **${stats.current.coverage_pct.toFixed(1)}%**. We've got this! 💪`;
     }
     if (stats.current.skipped_count > 0) {
       commitComment += ` <i>(${stats.current.skipped_count} ignored files)</i>`;
     }
-  } else {
-    core.info('No prior coverage information found in log');
-  }
+  } 
+
   if (stats.current.no_tests > 0) {
     commitComment += `\n<details><summary>:warning: ${stats.current.no_tests} of ${stats.current.pkg_count} packages have zero coverage.</summary>\n\n`;
     for (const pkgName of Object.keys(stats.current.pkg_stats).sort()) {
