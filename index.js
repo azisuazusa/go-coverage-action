@@ -296,22 +296,22 @@ async function generatePRComment(stats) {
   const notesRef = core.getInput('notes-ref');
   const commentMarker = getCommentMarker();
   let commitComment = `${commentMarker}
-    ### 🎉 New Test Coverage Added for ${notesRef}!
-    Fantastic work! 👏 You've initiated test coverage at **${stats.current.coverage_pct.toFixed(1)}%**. Each new test helps fortify our codebase. Keep expanding our coverage! 🚀`;
+## 🎉 New Test Coverage Added for ${notesRef}!
+Fantastic work! 👏 You've initiated test coverage at **${stats.current.coverage_pct.toFixed(1)}%**. Each new test helps fortify our codebase. Keep expanding our coverage! 🚀`;
 
   if (stats.prior.coverage_pct != null) {
     commitComment = `${commentMarker}
-      ### ↔️ Test Coverage Unchanged for ${notesRef}
-      Consistency is key! Let's use this stability as a launchpad to aim higher. Current coverage remains at **${stats.current.coverage_pct.toFixed(1)}%**. Previous commit: ${stats.prior.sha}. More tests mean stronger code! 🚀💡`;
+## ↔️ Test Coverage Unchanged for ${notesRef}
+Consistency is key! Let's use this stability as a launchpad to aim higher. Current coverage remains at **${stats.current.coverage_pct.toFixed(1)}%**. Previous commit: ${stats.prior.sha}. More tests mean stronger code! 🚀💡`;
 
     if (stats.deltaPct > 0) {
       commitComment = `${commentMarker}
-        ### 📈 Increased Test Coverage for ${notesRef}!
-        Fantastic progress! 🎉 We're stepping up our testing game, increasing coverage from **${stats.prior.coverage_pct.toFixed(1)}%** (commit: ${stats.prior.sha}) to **${stats.current.coverage_pct.toFixed(1)}%**. Keep pushing forward! 💻✨`;
+## 📈 Increased Test Coverage for ${notesRef}!
+Fantastic progress! 🎉 We're stepping up our testing game, increasing coverage from **${stats.prior.coverage_pct.toFixed(1)}%** (commit: ${stats.prior.sha}) to **${stats.current.coverage_pct.toFixed(1)}%**. Keep pushing forward! 💻✨`;
     } else if (stats.deltaPct < 0) {
       commitComment = `${commentMarker}
-        ### 🛑 Decreased Test Coverage Alert for ${notesRef}!
-        Not to worry! Let's turn this into a positive. Use this opportunity to strengthen our tests. Previous commit: ${stats.prior.sha}. Previous: **${stats.prior.coverage_pct.toFixed(1)}%**, Current: **${stats.current.coverage_pct.toFixed(1)}%**. We've got this! 💪`;
+## 🛑 Decreased Test Coverage Alert for ${notesRef}!
+Not to worry! Let's turn this into a positive. Use this opportunity to strengthen our tests. Previous commit: ${stats.prior.sha}. Previous: **${stats.prior.coverage_pct.toFixed(1)}%**, Current: **${stats.current.coverage_pct.toFixed(1)}%**. We've got this! 💪`;
     }
     if (stats.current.skipped_count > 0) {
       commitComment += ` <i>(${stats.current.skipped_count} ignored files)</i>`;
